@@ -141,7 +141,7 @@ if user_query:
         else:
             st.info(f"✅ Vector store ready with {len(vector_store.index_to_docstore_id)} documents")
 
-        response = prompt.troubleshootReseponse(llm, user_query, chat_history_text, st.session_state.get("vector_store", None))
+        response = prompt.troubleshootReseponse(llm, user_query, chat_history_text, vector_store)
         formatted_answer = f"""
         **Query Type:** Troubleshooting \n
         **Possible Causes:**\n """

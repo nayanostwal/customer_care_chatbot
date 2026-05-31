@@ -116,7 +116,7 @@ def rag(current_query: str, chat_history:str, vector_store):
   if vector_store:
     similarity_threshold = 0.6 # Define a similarity threshold
     # Use similarity_search_with_score to get documents and their scores
-    retrieved_docs_with_score = vector_store.similarity_search_with_score(current_query)
+    retrieved_docs_with_score = vector_store.similarity_search_with_score(current_query + " " + chat_history, k=3)
 
     #Return the top document based on the search
     # Filter documents based on the similarity threshold
