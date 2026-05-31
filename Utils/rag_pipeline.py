@@ -10,10 +10,11 @@ from langchain_community.document_loaders import TextLoader
 import streamlit as st
 
 def _save_uploaded_file_to_temp(uploaded_file):
-    suffix = Path(getattr(uploaded_file, 'name', '')).suffix or ''
+    original_name = getattr(uploaded_file, 'name', 'document')
+    suffix = Path(original_name).suffix or ''
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(uploaded_file.getvalue())
-        return tmp.name
+        return tmp.name, original_name
 
 def _get_embeddings():
     if os.environ.get("AZURE_OPENAI_API_KEY") and os.environ.get("AZURE_OPENAI_ENDPOINT"):
@@ -49,8 +50,9 @@ def create_vector_store(text):
 #     return "\n".join([doc.page_content for doc in docs])
 
 def load_txt(txt_path):
+    original_name = None
     if hasattr(txt_path, 'getvalue'):
-        txt_path = _save_uploaded_file_to_temp(txt_path)
+        txt_path, original_name = _save_uploaded_file_to_temp(txt_path)
 
     st.write(f"1. Loading document from {txt_path}")
     try:
@@ -60,13 +62,18 @@ def load_txt(txt_path):
         st.error(f"Error loading text file: {e}")
         return None
 
+    if original_name:
+        for doc in documents:
+            doc.metadata['source'] = original_name
+
     print(f"Loaded {len(documents)} documents from {txt_path}")
     print("2. Splitting the document into chunks")
     return documents
 
 def load_pdf(pdf_path):
+    original_name = None
     if hasattr(pdf_path, 'getvalue'):
-        pdf_path = _save_uploaded_file_to_temp(pdf_path)
+        pdf_path, original_name = _save_uploaded_file_to_temp(pdf_path)
 
     print(f"1. Loading document from {pdf_path}")
     try:
@@ -75,6 +82,10 @@ def load_pdf(pdf_path):
     except Exception as e:
         print(f"Error loading PDF: {e}")
         return None
+
+    if original_name:
+        for doc in documents:
+            doc.metadata['source'] = original_name
 
     print(f"Loaded {len(documents)} documents from {pdf_path}")
     print("2. Splitting the document into chunks")
