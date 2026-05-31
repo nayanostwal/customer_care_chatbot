@@ -97,6 +97,12 @@ def create_vector_store(documents):
     chunk_overlap=200
   )
   chunks = splitter.split_documents(documents)
+  
+  # Ensure metadata is preserved in all chunks
+  for chunk in chunks:
+    if 'source' not in chunk.metadata and documents and 'source' in documents[0].metadata:
+      chunk.metadata['source'] = documents[0].metadata['source']
+  
   print(f"Split into {len(chunks)} chunks")
 
   print(f"3. Creating embedding and storing in FAISS Vector Store")
@@ -106,11 +112,6 @@ def create_vector_store(documents):
   print("Embeddings created and stored in FAISS vector store")
 
   return vector_store
-
-
-# def retrieve_docs(vector_store, query):
-#     docs = vector_store.similarity_search(query, k=3)
-#     return "\n".join([doc.page_content for doc in docs])
 
 
 def retrieve_docs(vector_store, query):
