@@ -114,7 +114,7 @@ def rag(current_query: str, chat_history:str, vector_store):
   """
   retrieved_docs_content = ""
   if vector_store:
-    similarity_threshold = 0.0.6 # Define a similarity threshold
+    similarity_threshold = 0.6 # Define a similarity threshold
     # Use similarity_search_with_score to get documents and their scores
     retrieved_docs_with_score = vector_store.similarity_search_with_score(current_query)
 
