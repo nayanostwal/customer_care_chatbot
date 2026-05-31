@@ -84,8 +84,6 @@ if uploaded_file:
             st.error("Unable to load the uploaded document. Please check the file and try again.")
         else:
             st.session_state.vector_store = cached_vector_store(document)
-            vector_embeddings = st.session_state.vector_store.index.embeddings
-            st.write(f"Vector store created with {len(st.session_state.vector_store.index_to_docstore_id)} documents")
             st.success("Document processed!")
 
 # -----------------------------
